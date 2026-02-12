@@ -1,0 +1,78 @@
+---
+title: Authentication
+description: 'How to authenticate with the OpenMemoryX API'
+---
+
+OpenMemoryX uses two authentication methods:
+
+## 1. JWT Token (Portal)
+
+Used for user portal authentication. The token is obtained after login and should be stored in LocalStorage.
+
+```bash
+POST /api/auth/login
+```
+
+<ParamField body="username" type="string" required>
+  User email address
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  User password
+</ParamField>
+
+### Response
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+### Using the Token
+
+Include the token in the `Authorization` header:
+
+```bash
+curl https://t0ken.ai/api/auth/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+## 2. API Key (API Requests)
+
+Used for all API operations. Include your API key in the `X-API-Key` header.
+
+### Obtaining an API Key
+
+API keys are automatically created when you register. You can also create additional keys:
+
+```bash
+POST /api/keys
+```
+
+### Using API Keys
+
+```bash
+curl https://t0ken.ai/api/v1/memories \
+  -H "X-API-Key: omx_your_api_key_here"
+```
+
+<Warning>
+  Never expose your API key in client-side code. Use environment variables or secure key management.
+</Warning>
+
+## Authentication Errors
+
+| Status | Error | Description |
+|--------|-------|-------------|
+| 401 | `Invalid token` | JWT token is invalid or expired |
+| 401 | `Invalid API Key` | API key is invalid or revoked |
+| 403 | `Forbidden` | Insufficient permissions |
+
+## Security Best Practices
+
+1. **Rotate keys regularly** - Delete old keys and create new ones periodically
+2. **Use environment variables** - Never hardcode API keys
+3. **Limit key exposure** - Create separate keys for different environments
+4. **Monitor usage** - Check stats regularly for unexpected activity

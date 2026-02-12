@@ -1,0 +1,176 @@
+---
+title: Memories
+openapi: "POST /api/v1/memories"
+---
+
+The Memories API allows you to store, retrieve, search, and manage memories for your AI applications.
+
+## Create Memory
+
+Create a new memory. The memory is processed asynchronously with AI classification.
+
+<ParamField body="content" type="string" required>
+  The memory content to store
+</ParamField>
+
+<ParamField body="project_id" type="string" default="default">
+  Project ID for organizing memories
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Additional metadata for the memory
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/memories \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: omx_your_api_key" \
+  -d '{
+    "content": "User prefers dark mode in all applications",
+    "project_id": "default",
+    "metadata": {
+      "source": "user_settings",
+      "category": "preferences"
+    }
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "Memory queued for processing",
+  "task_id": "abc123def456",
+  "status": "pending"
+}
+```
+
+## List Memories
+
+Retrieve all memories for the authenticated user.
+
+<ParamField query="project_id" type="string">
+  Filter by project ID
+</ParamField>
+
+<ParamField query="limit" type="integer" default="100">
+  Maximum number of results
+</ParamField>
+
+<ParamField query="offset" type="integer" default="0">
+  Number of results to skip
+</ParamField>
+
+### Request
+
+```bash
+curl "https://t0ken.ai/api/v1/memories?limit=10" \
+  -H "X-API-Key: omx_your_api_key"
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "mem_123abc",
+      "content": "User prefers dark mode",
+      "project_id": "default",
+      "cognitive_sector": "semantic",
+      "importance_score": 0.85,
+      "created_at": "2026-02-13T10:00:00Z",
+      "updated_at": "2026-02-13T10:00:00Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+## Get Memory
+
+Retrieve a specific memory by ID.
+
+```bash
+curl https://t0ken.ai/api/v1/memories/mem_123abc \
+  -H "X-API-Key: omx_your_api_key"
+```
+
+## Delete Memory
+
+Delete a memory by ID.
+
+```bash
+curl -X DELETE https://t0ken.ai/api/v1/memories/mem_123abc \
+  -H "X-API-Key: omx_your_api_key"
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "Memory deleted successfully"
+}
+```
+
+## Search Memories
+
+Search memories using vector similarity and keyword matching.
+
+<ParamField body="query" type="string" required>
+  Search query string
+</ParamField>
+
+<ParamField body="project_id" type="string">
+  Filter by project ID
+</ParamField>
+
+<ParamField body="limit" type="integer" default="10">
+  Maximum number of results
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/memories/search \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: omx_your_api_key" \
+  -d '{
+    "query": "user preferences dark mode",
+    "limit": 5
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "mem_123abc",
+      "content": "User prefers dark mode in all applications",
+      "score": 0.92,
+      "cognitive_sector": "semantic"
+    }
+  ],
+  "query": "user preferences dark mode"
+}
+```
+
+## Cognitive Sectors
+
+Memories are automatically classified into cognitive sectors:
+
+| Sector | Description | Example |
+|--------|-------------|---------|
+| `episodic` | Specific events/experiences | "User visited Paris in 2024" |
+| `semantic` | Facts and general knowledge | "User prefers dark mode" |
+| `procedural` | Skills and how-to knowledge | "User knows Python" |
+| `emotional` | Feelings and preferences | "User enjoys sci-fi movies" |
+| `reflective` | Insights and summaries | "User values privacy" |

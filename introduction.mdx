@@ -1,0 +1,77 @@
+---
+title: Introduction
+description: 'OpenMemoryX - Free Cognitive Memory Engine for AI Applications'
+---
+
+## What is OpenMemoryX?
+
+OpenMemoryX is a **free cognitive memory engine** designed for AI applications. It provides persistent memory storage with automatic cognitive classification, vector search, and temporal knowledge graph features.
+
+<CardGroup cols={2}>
+  <Card title="Completely Free" icon="dollar-sign" color="#22c55e">
+    No credit card required. Unlimited API calls. Forever free.
+  </Card>
+  
+  <Card title="Async Processing" icon="zap" color="#3b82f6">
+    Celery + Valkey powered queue. No waiting for AI classification.
+  </Card>
+  
+  <Card title="Cognitive AI" icon="brain" color="#8b5cf6">
+    Automatic 5-sector classification: Episodic, Semantic, Procedural, Emotional, Reflective.
+  </Card>
+  
+  <Card title="Open Source" icon="github" color="#6b7280">
+    MIT License. Self-host or use our free cloud API.
+  </Card>
+
+</CardGroup>
+
+## Getting Started
+
+<Steps>
+  <Step title="Create an Account">
+    Register at [Portal](https://t0ken.ai/portal) or via API
+  </Step>
+  
+  <Step title="Get API Key">
+    Create an API key from the portal or use the default one
+  </Step>
+  
+  <Step title="Start Building">
+    Integrate the API into your application
+  </Step>
+</Steps>
+
+## Base URL
+
+```bash
+https://t0ken.ai/api
+```
+
+For local development:
+```bash
+http://192.168.31.65:8080/api
+```
+
+## Response Format
+
+All API responses follow a standard format:
+
+```json
+{
+  "success": true,
+  "data": { },
+  "message": "Operation completed successfully"
+}
+```
+
+## Rate Limits
+
+Free tier includes:
+- **Unlimited** API calls
+- **100MB** storage
+- **2 concurrent** async workers
+
+<Note>
+  Need higher limits? Contact us for enterprise options.
+</Note>

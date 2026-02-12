@@ -1,0 +1,78 @@
+{
+  "name": "OpenMemoryX",
+  "logo": "/logo.png",
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#6366f1",
+    "light": "#ffffff",
+    "dark": "#0f172a"
+  },
+  "topbarLinks": [
+    {
+      "name": "Website",
+      "url": "https://t0ken.ai"
+    },
+    {
+      "name": "Portal",
+      "url": "https://t0ken.ai/portal"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "GitHub",
+    "url": "https://github.com/CensorKo/OpenMemoryX"
+  },
+  "anchors": [
+    {
+      "name": "API Reference",
+      "icon": "code",
+      "url": "api-reference"
+    },
+    {
+      "name": "Changelog",
+      "icon": "clock",
+      "url": "changelog"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "authentication"
+      ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "concepts/memories",
+        "concepts/projects",
+        "concepts/cognitive-sectors"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/authentication",
+        "api-reference/keys",
+        "api-reference/memories",
+        "api-reference/projects",
+        "api-reference/tasks",
+        "api-reference/stats"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "integrations/cursor",
+        "integrations/openclaw"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/CensorKo/OpenMemoryX"
+  },
+  "feedback": {
+    "thumbsRating": true
+  }
+}
