@@ -54,6 +54,7 @@
       "group": "API Reference",
       "pages": [
         "api-reference/authentication",
+        "api-reference/agents",
         "api-reference/keys",
         "api-reference/memories",
         "api-reference/projects",

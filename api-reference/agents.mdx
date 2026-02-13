@@ -1,0 +1,178 @@
+---
+title: Agents
+openapi: "POST /api/v1/agents/auto-register"
+---
+
+The Agents API allows AI agents to automatically register and obtain their own memory space.
+
+## Auto Register
+
+Automatically register an AI agent based on machine fingerprint. Creates a machine account with API key.
+
+<ParamField body="machine_fingerprint" type="string" required>
+  Unique machine identifier (auto-generated)
+</ParamField>
+
+<ParamField body="platform" type="string">
+  Operating system: `macos`, `linux`, or `windows`
+</ParamField>
+
+<ParamField body="hostname" type="string">
+  Machine hostname
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/agents/auto-register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "machine_fingerprint": "auto-generated",
+    "platform": "macos",
+    "hostname": "macmini-office"
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "user_id": "machine_abc123",
+    "api_key": "omx_agent_api_key_xxx",
+    "project_id": "default",
+    "is_machine_account": true,
+    "machine_fingerprint": "fp_xxx",
+    "created_at": "2026-02-13T10:00:00Z"
+  }
+}
+```
+
+## Claim Account Init
+
+Initiate the claim process to link a machine account to a human email.
+
+<ParamField body="machine_fingerprint" type="string" required>
+  The machine fingerprint to claim
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Human email address to link
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/agents/claim/init \
+  -H "Content-Type: application/json" \
+  -d '{
+    "machine_fingerprint": "fp_xxx",
+    "email": "user@example.com"
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "verification_code": "123456",
+    "expires_at": "2026-02-13T10:10:00Z"
+  }
+}
+```
+
+## Claim Account Verify
+
+Verify the claim code and complete the account linking.
+
+<ParamField body="machine_fingerprint" type="string" required>
+  The machine fingerprint
+</ParamField>
+
+<ParamField body="verification_code" type="string" required>
+  6-digit verification code
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/agents/claim/verify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "machine_fingerprint": "fp_xxx",
+    "verification_code": "123456"
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Account claimed successfully",
+    "merged_to_user_id": "human_user_xxx"
+  }
+}
+```
+
+## Get Machine Stats
+
+Get statistics for a machine account.
+
+<ParamField query="machine_fingerprint" type="string" required>
+  Machine fingerprint
+</ParamField>
+
+### Request
+
+```bash
+curl "https://t0ken.ai/api/v1/agents/machine-stats?machine_fingerprint=fp_xxx"
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "total_memories": 150,
+    "total_projects": 3,
+    "api_calls_24h": 42,
+    "storage_used": "2.5MB",
+    "created_at": "2026-02-13T10:00:00Z"
+  }
+}
+```
+
+## How It Works
+
+### Machine-Based Isolation
+
+1. **Fingerprint Generation**: Each machine gets a unique fingerprint based on hardware characteristics
+2. **Automatic Account Creation**: First-time agents auto-create a machine account
+3. **Memory Sharing**: All agents on the same machine share the same memory pool
+4. **Cross-Machine Isolation**: Different machines cannot access each other's data
+
+### Claim Process
+
+1. Agent generates a 6-digit verification code
+2. User enters code in web UI to verify ownership
+3. Machine account merges into human account
+4. All memories and settings are preserved
+
+### Use Cases
+
+- **Local AI Agents**: Cursor, OpenClaw, Claude Code integration
+- **Multi-Agent Systems**: Multiple agents sharing memory on same machine
+- **Team Collaboration**: Claim and share machine accounts with team members
+
+## Security
+
+- Machine fingerprints are cryptographically generated
+- API keys are scoped to machine accounts
+- Claim process requires email verification
+- All data is encrypted at rest and in transit
