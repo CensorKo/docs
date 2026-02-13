@@ -1,0 +1,190 @@
+---
+title: OpenClaw Integration
+description: 'Use OpenMemoryX with OpenClaw'
+---
+
+OpenClaw is an AI agent platform. Integrating OpenMemoryX gives your OpenClaw agents persistent memory across sessions.
+
+## Setup
+
+### 1. Configure OpenClaw
+
+Add OpenMemoryX configuration to your OpenClaw environment:
+
+```bash
+# .env
+OPENMEMORYX_API_KEY=omx_your_api_key_here
+OPENMEMORYX_PROJECT_ID=openclaw-agent
+```
+
+### 2. Create a Memory Skill
+
+Create a skill file for your OpenClaw agent:
+
+```python
+# skills/memory.py
+import os
+import requests
+
+API_KEY = os.getenv("OPENMEMORYX_API_KEY")
+BASE_URL = "https://t0ken.ai/api/v1"
+
+def store_memory(content: str, project_id: str = "default", metadata: dict = None):
+    """Store a memory in OpenMemoryX"""
+    response = requests.post(
+        f"{BASE_URL}/memories",
+        headers={"X-API-Key": API_KEY},
+        json={
+            "content": content,
+            "project_id": project_id,
+            "metadata": metadata or {}
+        }
+    )
+    return response.json()
+
+def search_memories(query: str, project_id: str = None, limit: int = 5):
+    """Search memories in OpenMemoryX"""
+    payload = {"query": query, "limit": limit}
+    if project_id:
+        payload["project_id"] = project_id
+    
+    response = requests.post(
+        f"{BASE_URL}/memories/search",
+        headers={"X-API-Key": API_KEY},
+        json=payload
+    )
+    return response.json()["data"]
+
+def get_recent_memories(project_id: str = None, limit: int = 10):
+    """Get recent memories"""
+    url = f"{BASE_URL}/memories?limit={limit}"
+    if project_id:
+        url += f"&project_id={project_id}"
+    
+    response = requests.get(
+        url,
+        headers={"X-API-Key": API_KEY}
+    )
+    return response.json()["data"]
+```
+
+### 3. Use in Your Agent
+
+```python
+# agent.py
+from skills.memory import store_memory, search_memories
+
+class MyAgent:
+    def __init__(self):
+        self.project_id = "my-agent"
+    
+    def remember_user_preference(self, preference: str):
+        """Store user preference"""
+        store_memory(
+            content=preference,
+            project_id=self.project_id,
+            metadata={"type": "preference"}
+        )
+    
+    def recall_context(self, query: str):
+        """Recall relevant context"""
+        memories = search_memories(
+            query=query,
+            project_id=self.project_id
+        )
+        return [m["content"] for m in memories]
+```
+
+## Example Workflows
+
+### User Preferences
+
+```python
+# When user mentions a preference
+agent.remember_user_preference("User prefers dark mode")
+
+# Later, when making UI suggestions
+context = agent.recall_context("UI preferences")
+```
+
+### Session Continuity
+
+```python
+# End of session
+store_memory(
+    content=f"Session summary: {summary}",
+    project_id="session-history"
+)
+
+# Start of new session
+recent = get_recent_memories(project_id="session-history", limit=3)
+```
+
+### Task Context
+
+```python
+# Store task decisions
+def store_decision(decision: str, rationale: str):
+    store_memory(
+        content=f"Decision: {decision}. Rationale: {rationale}",
+        project_id="task-decisions",
+        metadata={"type": "decision"}
+    )
+```
+
+## Advanced Usage
+
+### Automatic Memory Capture
+
+Configure your agent to automatically capture important information:
+
+```python
+async def on_user_message(message: str):
+    # Check if message contains important info
+    if contains_preference(message):
+        await store_memory(
+            content=extract_preference(message),
+            project_id="auto-captured"
+        )
+    
+    # Search for relevant context
+    context = await search_memories(message)
+    
+    # Generate response with context
+    response = await llm.generate(
+        message,
+        context=context
+    )
+```
+
+### Memory-Aware Responses
+
+```python
+def generate_with_memory(user_query: str):
+    # Get relevant memories
+    memories = search_memories(user_query)
+    
+    # Build context
+    memory_context = "\n".join([
+        f"- {m['content']} ({m['cognitive_sector']})"
+        for m in memories
+    ])
+    
+    prompt = f"""
+    User query: {user_query}
+    
+    Relevant context from memory:
+    {memory_context}
+    
+    Respond considering the above context.
+    """
+    
+    return llm.generate(prompt)
+```
+
+## Best Practices
+
+- **Project isolation** - Use different projects for different agents
+- **Regular syncing** - Store important context at session end
+- **Memory cleanup** - Delete outdated memories periodically
+- **Metadata tagging** - Tag memories with types for better filtering

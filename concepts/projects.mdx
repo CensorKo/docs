@@ -1,0 +1,73 @@
+---
+title: Projects
+description: 'Organizing memories with projects'
+---
+
+Projects help you organize memories into logical groups. Think of them as namespaces or containers for related memories.
+
+## Why Use Projects?
+
+- **Separation** - Keep different applications' memories separate
+- **Organization** - Group memories by user, client, or use case
+- **Filtering** - Search within a specific project
+- **Permissions** - Future: share specific projects with team members
+
+## Default Project
+
+Every user has a `default` project that's used when no project is specified:
+
+```json
+{
+  "id": "proj_default",
+  "name": "default",
+  "description": "Default project"
+}
+```
+
+## Creating Projects
+
+Create projects via API:
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/projects \
+  -H "X-API-Key: omx_your_api_key" \
+  -d '{
+    "name": "customer-support-bot",
+    "description": "Memories for the support chatbot"
+  }'
+```
+
+## Project Naming
+
+- Use lowercase letters, numbers, and hyphens
+- Keep names descriptive but concise
+- Use consistent naming conventions
+
+Good examples:
+- `myapp-production`
+- `customer-support`
+- `user-12345`
+
+## Using Projects
+
+Specify the project when creating memories:
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/memories \
+  -H "X-API-Key: omx_your_api_key" \
+  -d '{
+    "content": "User asked about pricing",
+    "project_id": "customer-support-bot"
+  }'
+```
+
+Filter by project when searching:
+
+```bash
+curl -X POST https://t0ken.ai/api/v1/memories/search \
+  -H "X-API-Key: omx_your_api_key" \
+  -d '{
+    "query": "pricing questions",
+    "project_id": "customer-support-bot"
+  }'
+```

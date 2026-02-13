@@ -1,0 +1,89 @@
+---
+title: Memories
+description: 'Understanding how memories work in OpenMemoryX'
+---
+
+Memories are the core data unit in OpenMemoryX. They represent pieces of information that your AI application wants to remember about users or contexts.
+
+## What is a Memory?
+
+A memory consists of:
+
+- **Content** - The actual text content to remember
+- **Project ID** - Which project this memory belongs to
+- **Metadata** - Additional structured data (optional)
+- **Cognitive Sector** - AI-classified category (auto-assigned)
+- **Importance Score** - AI-calculated relevance (0-1)
+
+## Memory Structure
+
+```json
+{
+  "id": "mem_123abc",
+  "content": "User prefers dark mode in all applications",
+  "project_id": "default",
+  "cognitive_sector": "semantic",
+  "importance_score": 0.85,
+  "metadata": {
+    "source": "user_settings",
+    "category": "preferences"
+  },
+  "created_at": "2026-02-13T10:00:00Z"
+}
+```
+
+## Cognitive Sectors
+
+Every memory is automatically classified into one of five cognitive sectors:
+
+<CardGroup cols={2}>
+  <Card title="Episodic" icon="calendar" color="#f59e0b">
+    Specific events and experiences
+    
+    *Example: "User visited Paris in 2024"*
+  </Card>
+  
+  <Card title="Semantic" icon="book" color="#3b82f6">
+    Facts and general knowledge
+    
+    *Example: "User prefers dark mode"*
+  </Card>
+  
+  <Card title="Procedural" icon="code" color="#10b981">
+    Skills and how-to knowledge
+    
+    *Example: "User knows Python"*
+  </Card>
+  
+  <Card title="Emotional" icon="heart" color="#ec4899">
+    Feelings and preferences
+    
+    *Example: "User enjoys sci-fi movies"*
+  </Card>
+  
+  <Card title="Reflective" icon="lightbulb" color="#8b5cf6">
+    Insights and summaries
+    
+    *Example: "User values privacy"*
+  </Card>
+
+</CardGroup>
+
+## Async Processing
+
+Memories are processed asynchronously:
+
+1. **Submit** - Send memory content via API
+2. **Queue** - Memory enters processing queue
+3. **AI Classification** - AI determines sector and importance
+4. **Vector Embedding** - Create searchable vector representation
+5. **Storage** - Save to database and knowledge graph
+
+This allows your application to continue without waiting for AI processing.
+
+## Best Practices
+
+- **Keep content concise** - 1-2 sentences per memory works best
+- **Use consistent project IDs** - Organize by application or user
+- **Add relevant metadata** - Helps with filtering and context
+- **Don't store PII** - Avoid storing sensitive personal information

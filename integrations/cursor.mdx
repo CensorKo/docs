@@ -1,0 +1,96 @@
+---
+title: Cursor Integration
+description: 'Use OpenMemoryX with Cursor IDE'
+---
+
+Cursor is an AI-powered code editor. You can integrate OpenMemoryX to give Cursor persistent memory across conversations.
+
+## Setup
+
+### 1. Get Your API Key
+
+1. Log in to [OpenMemoryX Portal](https://t0ken.ai/portal)
+2. Copy your default API key (starts with `omx_`)
+
+### 2. Configure Cursor
+
+In Cursor, you can use OpenMemoryX via:
+
+#### Option A: Custom MCP Server
+
+Create an MCP (Model Context Protocol) server that connects to OpenMemoryX:
+
+```python
+# mcp_server.py
+from mcp.server import Server
+import requests
+
+app = Server("openmemoryx")
+
+@app.call_tool()
+def search_memories(query: str):
+    """Search memories in OpenMemoryX"""
+    response = requests.post(
+        "https://t0ken.ai/api/v1/memories/search",
+        headers={"X-API-Key": "omx_your_key"},
+        json={"query": query, "limit": 5}
+    )
+    return response.json()["data"]
+```
+
+#### Option B: Direct API in Cursor Rules
+
+Add to your `.cursorrules` file:
+
+```markdown
+## Memory Management
+
+When working with this project, use OpenMemoryX for persistent memory:
+
+- Store user preferences: POST https://t0ken.ai/api/v1/memories
+- Retrieve context: POST https://t0ken.ai/api/v1/memories/search
+- API Key: omx_your_key_here
+
+Always check for relevant memories before making suggestions.
+```
+
+### 3. Using in Cursor
+
+When chatting with Cursor, mention:
+
+```
+"Remember that I prefer functional programming patterns"
+"What did we decide about the database schema?"
+"Search my memories for API design preferences"
+```
+
+## Example Workflows
+
+### Store Code Preferences
+
+```
+User: I prefer using TypeScript with strict mode enabled
+[Cursor stores: "User prefers TypeScript with strict mode"]
+```
+
+### Retrieve Context
+
+```
+User: How should I structure this new API endpoint?
+[Cursor searches memories for "API design preferences"]
+[Cursor finds: "User prefers RESTful patterns with clear naming"]
+```
+
+### Project-Specific Memory
+
+```
+User: This project uses PostgreSQL with Prisma
+[Cursor stores with project_id: "current-project"]
+```
+
+## Best Practices
+
+- **Store decisions** - Save architectural choices and preferences
+- **Use project IDs** - Separate memories per project
+- **Regular cleanup** - Delete outdated memories
+- **Add metadata** - Include context like tech stack

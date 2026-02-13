@@ -1,0 +1,89 @@
+---
+title: API Authentication
+openapi: "POST /api/auth/login"
+---
+
+The Authentication API allows you to authenticate users and obtain access tokens for the OpenMemoryX portal.
+
+## Register
+
+Create a new user account.
+
+<ParamField body="email" type="string" required>
+  User email address
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  User password (min 8 characters)
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "securepassword123"
+  }'
+```
+
+### Response
+
+```json
+{
+  "id": 1,
+  "email": "user@example.com",
+  "message": "User registered successfully"
+}
+```
+
+## Login
+
+Authenticate and obtain a JWT access token.
+
+<ParamField body="username" type="string" required>
+  User email address
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  User password
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=user@example.com&password=securepassword123"
+```
+
+### Response
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+## Get Current User
+
+Retrieve information about the currently authenticated user.
+
+### Request
+
+```bash
+curl https://t0ken.ai/api/auth/me \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+### Response
+
+```json
+{
+  "id": 1,
+  "email": "user@example.com",
+  "created_at": "2026-02-13T10:00:00Z"
+}
+```

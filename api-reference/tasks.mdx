@@ -1,0 +1,73 @@
+---
+title: Tasks
+openapi: "GET /api/v1/tasks/{task_id}"
+---
+
+The Tasks API allows you to check the status of asynchronous memory processing operations.
+
+## Get Task Status
+
+Check the processing status of a memory creation task.
+
+<ParamField path="task_id" type="string" required>
+  The task ID returned when creating a memory
+</ParamField>
+
+### Request
+
+```bash
+curl https://t0ken.ai/api/v1/tasks/abc123def456 \
+  -H "X-API-Key: omx_your_api_key"
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "task_id": "abc123def456",
+    "status": "completed",
+    "memory_id": "mem_123abc",
+    "cognitive_sector": "semantic",
+    "importance_score": 0.85,
+    "created_at": "2026-02-13T10:00:00Z",
+    "completed_at": "2026-02-13T10:00:05Z"
+  }
+}
+```
+
+## Task Statuses
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Task is queued for processing |
+| `processing` | AI is currently classifying the memory |
+| `completed` | Memory has been successfully stored |
+| `failed` | Processing failed (check error message) |
+
+## Polling Strategy
+
+For real-time applications, poll the task status every 1-2 seconds:
+
+```python
+import time
+
+def wait_for_memory(task_id, api_key, timeout=30):
+    start = time.time()
+    while time.time() - start < timeout:
+        response = requests.get(
+            f"https://t0ken.ai/api/v1/tasks/{task_id}",
+            headers={"X-API-Key": api_key}
+        )
+        data = response.json()["data"]
+        
+        if data["status"] == "completed":
+            return data["memory_id"]
+        elif data["status"] == "failed":
+            raise Exception(f"Task failed: {data.get('error')}")
+        
+        time.sleep(1)
+    
+    raise TimeoutError("Task processing timeout")
+```

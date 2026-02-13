@@ -1,0 +1,52 @@
+---
+title: Stats
+openapi: "GET /api/v1/stats"
+---
+
+The Stats API provides usage statistics and metrics for your OpenMemoryX account.
+
+## Get Statistics
+
+Retrieve usage statistics for the authenticated user.
+
+### Request
+
+```bash
+curl https://t0ken.ai/api/v1/stats \
+  -H "X-API-Key: omx_your_api_key"
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "total_memories": 1523,
+    "total_projects": 5,
+    "api_calls_today": 245,
+    "api_calls_this_month": 5421,
+    "storage_used_mb": 45.2,
+    "storage_limit_mb": 100,
+    "cognitive_sectors": {
+      "episodic": 234,
+      "semantic": 678,
+      "procedural": 156,
+      "emotional": 312,
+      "reflective": 143
+    }
+  }
+}
+```
+
+## Statistics Fields
+
+| Field | Description |
+|-------|-------------|
+| `total_memories` | Total number of stored memories |
+| `total_projects` | Number of projects created |
+| `api_calls_today` | API calls made today |
+| `api_calls_this_month` | API calls made this month |
+| `storage_used_mb` | Storage used in megabytes |
+| `storage_limit_mb` | Storage limit for your tier |
+| `cognitive_sectors` | Breakdown of memories by cognitive sector |

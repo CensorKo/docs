@@ -1,0 +1,90 @@
+---
+title: API Keys
+openapi: "GET /api/keys"
+---
+
+The API Keys management endpoint allows you to create, list, and revoke API keys for accessing the OpenMemoryX API.
+
+## List API Keys
+
+Retrieve all API keys for the authenticated user.
+
+### Request
+
+```bash
+curl https://t0ken.ai/api/keys \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Default",
+      "key": "omx_xxxxxxxxxxxxxxxxxxxxxxxx",
+      "is_active": true,
+      "created_at": "2026-02-13T10:00:00Z"
+    }
+  ]
+}
+```
+
+## Create API Key
+
+Create a new API key.
+
+<ParamField body="name" type="string" required>
+  Name for the API key (e.g., "Production", "Development")
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://t0ken.ai/api/keys \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Production"
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 2,
+    "name": "Production",
+    "key": "omx_yyyyyyyyyyyyyyyyyyyyyyyy",
+    "is_active": true,
+    "created_at": "2026-02-13T10:00:00Z"
+  }
+}
+```
+
+<Warning>
+  Save the API key securely. It will only be shown once during creation.
+</Warning>
+
+## Revoke API Key
+
+Delete an API key by ID.
+
+```bash
+curl -X DELETE https://t0ken.ai/api/keys/2 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "API key revoked successfully"
+}
+```

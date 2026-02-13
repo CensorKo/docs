@@ -1,0 +1,93 @@
+---
+title: Cognitive Sectors
+description: 'Understanding AI memory classification'
+---
+
+OpenMemoryX automatically classifies memories into five cognitive sectors, inspired by human memory systems. This classification happens automatically using AI.
+
+## The Five Sectors
+
+### Episodic Memory
+
+Events and experiences tied to specific times and contexts.
+
+<Card icon="calendar" color="#f59e0b">
+  **Examples:**
+  - "User visited Paris in summer 2024"
+  - "User completed onboarding yesterday"
+  - "User had a meeting with the sales team"
+</Card>
+
+### Semantic Memory
+
+Facts, concepts, and general knowledge.
+
+<Card icon="book" color="#3b82f6">
+  **Examples:**
+  - "User prefers dark mode in all apps"
+  - "User works as a software engineer"
+  - "User's company is based in Tokyo"
+</Card>
+
+### Procedural Memory
+
+Skills, processes, and how-to knowledge.
+
+<Card icon="code" color="#10b981">
+  **Examples:**
+  - "User knows how to deploy Docker containers"
+  - "User is proficient in Python"
+  - "User follows a specific code review process"
+</Card>
+
+### Emotional Memory
+
+Feelings, preferences, and emotional responses.
+
+<Card icon="heart" color="#ec4899">
+  **Examples:**
+  - "User feels frustrated with complex UIs"
+  - "User enjoys sci-fi movies"
+  - "User is excited about AI technology"
+</Card>
+
+### Reflective Memory
+
+Insights, summaries, and self-knowledge.
+
+<Card icon="lightbulb" color="#8b5cf6">
+  **Examples:**
+  - "User values privacy over convenience"
+  - "User prefers async communication"
+  - "User's goal is to learn machine learning"
+</Card>
+
+## How Classification Works
+
+When you create a memory:
+
+1. **Submit** - Send content to API
+2. **AI Analysis** - GPT-4 analyzes the content
+3. **Sector Assignment** - Determines the most appropriate sector
+4. **Importance Scoring** - Calculates relevance (0-1)
+5. **Storage** - Saves with classification metadata
+
+## Using Sectors
+
+### Filter by Sector
+
+```bash
+curl "https://t0ken.ai/api/v1/memories?sector=semantic" \
+  -H "X-API-Key: omx_your_api_key"
+```
+
+### Search with Sector Context
+
+The search API automatically considers cognitive sectors when ranking results, giving you more relevant matches based on the type of information you're looking for.
+
+## Benefits
+
+- **Better Search** - Sector context improves relevance
+- **Memory Organization** - Natural categorization
+- **Insights** - Understand what types of information you store most
+- **Filtering** - Focus on specific memory types
