@@ -1055,7 +1055,7 @@
           "conversations"
         ],
         "summary": "Realtime Message",
-        "description": "实时消息接收 - 立即处理\n\n用于高优先级消息，绕过缓冲直接处理",
+        "description": "实时消息接收 - 立即入队处理\n\n用于高优先级消息，快速入队由 Celery worker 处理",
         "operationId": "realtime_message_api_v1_conversations_realtime_post",
         "parameters": [
           {
