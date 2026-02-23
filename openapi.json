@@ -638,7 +638,7 @@
           "memories"
         ],
         "summary": "List Memories",
-        "description": "列出用户的所有记忆\n\nArgs:\n    limit: 返回数量限制（默认 50）\n    offset: 分页偏移（默认 0）",
+        "description": "列出 Agent 的所有记忆\n\nArgs:\n    limit: 返回数量限制（默认 50）\n    offset: 分页偏移（默认 0）",
         "operationId": "list_memories_api_v1_memories_list_get",
         "parameters": [
           {
@@ -1835,7 +1835,7 @@
           "Agent Auto Registration"
         ],
         "summary": "Auto Register Agent",
-        "description": "Agent 自动注册接口 - 基于机器指纹创建账户",
+        "description": "Agent 自动注册接口\n\nSDK 首次启动时调用，携带本地生成的 agent_id 和机器指纹。\n服务端创建/更新 Machine、Agent、Project，返回 API Key。",
         "operationId": "auto_register_agent_api_agents_auto_register_post",
         "parameters": [
           {
@@ -1889,22 +1889,22 @@
         }
       }
     },
-    "/api/agents/machine-stats": {
+    "/api/agents/info": {
       "get": {
         "tags": [
           "Agent Auto Registration"
         ],
-        "summary": "Get Machine Stats",
-        "description": "获取当前机器上的 Agent 统计信息",
-        "operationId": "get_machine_stats_api_agents_machine_stats_get",
+        "summary": "Get Agent Info",
+        "description": "获取当前 Agent 的信息",
+        "operationId": "get_agent_info_api_agents_info_get",
         "parameters": [
           {
-            "name": "api_key",
+            "name": "x_api_key",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string",
-              "title": "Api Key"
+              "title": "X Api Key"
             }
           },
           {
@@ -2211,39 +2211,42 @@
       },
       "AgentRegisterRequest": {
         "properties": {
+          "agent_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 5,
+            "title": "Agent Id"
+          },
+          "agent_type": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Agent Type"
+          },
           "machine_fingerprint": {
             "type": "string",
             "maxLength": 64,
             "minLength": 16,
             "title": "Machine Fingerprint"
           },
-          "agent_type": {
-            "type": "string",
-            "title": "Agent Type"
-          },
           "agent_name": {
             "type": "string",
+            "maxLength": 255,
             "title": "Agent Name",
-            "default": "unnamed-agent"
+            "default": ""
           },
           "platform": {
             "type": "string",
+            "maxLength": 50,
             "title": "Platform",
             "default": "unknown"
-          },
-          "platform_version": {
-            "type": "string",
-            "title": "Platform Version"
-          },
-          "python_version": {
-            "type": "string",
-            "title": "Python Version"
           }
         },
         "type": "object",
         "required": [
-          "machine_fingerprint",
-          "agent_type"
+          "agent_id",
+          "agent_type",
+          "machine_fingerprint"
         ],
         "title": "AgentRegisterRequest"
       },
@@ -2265,6 +2268,10 @@
             "type": "boolean",
             "title": "Is New Machine"
           },
+          "is_new_agent": {
+            "type": "boolean",
+            "title": "Is New Agent"
+          },
           "message": {
             "type": "string",
             "title": "Message"
@@ -2276,6 +2283,7 @@
           "api_key",
           "project_id",
           "is_new_machine",
+          "is_new_agent",
           "message"
         ],
         "title": "AgentRegisterResponse"
@@ -2455,7 +2463,7 @@
             "type": "array",
             "title": "Memories"
           },
-          "project_id": {
+          "agent_id": {
             "anyOf": [
               {
                 "type": "string"
@@ -2464,8 +2472,7 @@
                 "type": "null"
               }
             ],
-            "title": "Project Id",
-            "default": "default"
+            "title": "Agent Id"
           }
         },
         "type": "object",
@@ -2506,18 +2513,6 @@
             "type": "string",
             "title": "Content"
           },
-          "project_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Project Id",
-            "default": "default"
-          },
           "metadata": {
             "anyOf": [
               {
@@ -2530,6 +2525,17 @@
             ],
             "title": "Metadata",
             "default": {}
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
           }
         },
         "type": "object",
