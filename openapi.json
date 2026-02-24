@@ -719,6 +719,7 @@
           "memories"
         ],
         "summary": "Search Memories",
+        "description": "搜索记忆\n\n搜索模式：\n- is_project_level=False（默认）：只搜当前 agent\n- is_project_level=True：搜索 agent 所属 project 下所有 agent 的记忆",
         "operationId": "search_memories_api_v1_memories_search_post",
         "parameters": [
           {
@@ -789,6 +790,7 @@
           "memories"
         ],
         "summary": "Search Graph",
+        "description": "图搜索接口 - 内部调用统一的 get_context_for_query（向量+图）\n\n搜索模式：\n- is_project_level=False（默认）：只搜当前 agent\n- is_project_level=True：搜索 agent 所属 project 下所有 agent 的记忆\n\n注意：此接口与 /memories/search 共享配额计数逻辑。\n为避免重复计数，此接口不再单独增加使用次数。\n推荐使用 /memories/search 作为主要搜索接口。",
         "operationId": "search_graph_api_v1_memories_graph_search_post",
         "parameters": [
           {
@@ -1835,7 +1837,7 @@
           "Agent Auto Registration"
         ],
         "summary": "Auto Register Agent",
-        "description": "Agent 自动注册接口\n\nSDK 首次启动时调用，携带本地生成的 agent_id 和机器指纹。\n服务端创建/更新 Machine、Agent、Project，返回 API Key。",
+        "description": "Agent 自动注册接口\n\nSDK 首次启动时调用，携带机器指纹和 agent 信息。\n服务端创建/更新 Machine、Agent、Project，返回 API Key。",
         "operationId": "auto_register_agent_api_agents_auto_register_post",
         "parameters": [
           {
@@ -2211,29 +2213,23 @@
       },
       "AgentRegisterRequest": {
         "properties": {
-          "agent_id": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 5,
-            "title": "Agent Id"
-          },
           "agent_type": {
             "type": "string",
             "maxLength": 50,
             "minLength": 1,
             "title": "Agent Type"
           },
+          "agent_name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Agent Name"
+          },
           "machine_fingerprint": {
             "type": "string",
             "maxLength": 64,
             "minLength": 16,
             "title": "Machine Fingerprint"
-          },
-          "agent_name": {
-            "type": "string",
-            "maxLength": 255,
-            "title": "Agent Name",
-            "default": ""
           },
           "platform": {
             "type": "string",
@@ -2244,8 +2240,8 @@
         },
         "type": "object",
         "required": [
-          "agent_id",
           "agent_type",
+          "agent_name",
           "machine_fingerprint"
         ],
         "title": "AgentRegisterRequest"
@@ -2704,16 +2700,17 @@
             "type": "string",
             "title": "Query"
           },
-          "project_id": {
+          "is_project_level": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "boolean"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Project Id"
+            "title": "Is Project Level",
+            "default": false
           },
           "limit": {
             "anyOf": [
