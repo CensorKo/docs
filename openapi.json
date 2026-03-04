@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "MemoryX",
-    "description": "MemoryX - Free Cognitive Memory API with Queue",
+    "title": "MemoryX API",
+    "description": "MemoryX – Cognitive Memory API and LLM proxy.\n\n**Base URL:** `https://t0ken.ai/api`\n\n**Consumers:**\n- **SDK / MCP:** Memories (v1), Conversations (v1), Projects, Stats, Agents (auto-register, claim), API Keys\n- **OpenClaw plugin:** LLM Proxy (chat completions with memory injection)\n- **Portal:** Auth (Firebase), Subscription, Install guide\n- **Public:** Models repo (search, autocomplete)\n\n**Auth:** `X-API-Key` for SDK/MCP/plugin; Firebase ID token or Bearer for portal endpoints.",
     "version": "1.0.0"
   },
   "paths": {
@@ -13,24 +13,7 @@
         ],
         "summary": "Register",
         "operationId": "register_api_auth_register_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -72,24 +55,7 @@
         ],
         "summary": "Login",
         "operationId": "login_api_auth_login_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -136,24 +102,7 @@
             "OAuth2PasswordBearer": []
           }
         ],
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -178,6 +127,142 @@
         }
       }
     },
+    "/api/auth/timezone/detect": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Detect Timezone",
+        "description": "Auto-detect timezone from client IP using GeoIP.",
+        "operationId": "detect_timezone_api_auth_timezone_detect_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/timezone": {
+      "put": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Update Timezone",
+        "description": "Set user timezone (IANA format, e.g. 'Asia/Shanghai').",
+        "operationId": "update_timezone_api_auth_timezone_put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimezoneUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/firebase": {
+      "post": {
+        "tags": [
+          "Firebase Auth"
+        ],
+        "summary": "Firebase Auth",
+        "description": "Authenticate with Firebase ID Token\n\nBody: {\"id_token\": \"...\"}\nor Header: Authorization: Bearer {firebase_id_token}",
+        "operationId": "firebase_auth_api_auth_firebase_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirebaseAuthRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/firebase/config": {
+      "get": {
+        "tags": [
+          "Firebase Auth"
+        ],
+        "summary": "Get Firebase Config",
+        "description": "Get Firebase config for client-side initialization",
+        "operationId": "get_firebase_config_api_auth_firebase_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/api-keys": {
       "get": {
         "tags": [
@@ -190,24 +275,7 @@
             "OAuth2PasswordBearer": []
           }
         ],
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -246,24 +314,7 @@
             "OAuth2PasswordBearer": []
           }
         ],
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -319,22 +370,6 @@
               "type": "integer",
               "title": "Key Id"
             }
-          },
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
           }
         ],
         "responses": {
@@ -380,22 +415,6 @@
               "type": "integer",
               "title": "Key Id"
             }
-          },
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
           }
         ],
         "responses": {
@@ -429,22 +448,6 @@
         "description": "添加记忆 - 异步队列处理\n\n记忆添加操作通过 Celery 队列异步处理，防止 LLM 被打爆。\n返回 task_id 可用于查询处理状态。",
         "operationId": "create_memory_api_v1_memories_post",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -500,22 +503,6 @@
         "description": "批量添加记忆 - 异步队列处理\n\n批量记忆添加操作通过 Celery 队列异步处理。\n返回 task_id 可用于查询处理状态。",
         "operationId": "batch_create_memories_api_v1_memories_batch_post",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -581,22 +568,6 @@
             }
           },
           {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
             "name": "x-api-key",
             "in": "header",
             "required": false,
@@ -638,7 +609,7 @@
           "memories"
         ],
         "summary": "List Memories",
-        "description": "列出 Agent 的所有记忆\n\nArgs:\n    limit: 返回数量限制（默认 50）\n    offset: 分页偏移（默认 0）",
+        "description": "列出 Agent 的记忆（仅按时间倒序，无向量查找）。\n支持按时间范围、category、tags 过滤；要删除请先 search 再 delete。\n\nArgs:\n    limit: 返回数量限制（默认 50）\n    offset: 分页偏移（默认 0）\n    time_start: ISO8601 起始时间（含）\n    time_end: ISO8601 结束时间（含）\n    categories: 限定 category 列表\n    tags: 限定 tags（Fact.tags 与其中任一有交集即保留）",
         "operationId": "list_memories_api_v1_memories_list_get",
         "parameters": [
           {
@@ -662,19 +633,35 @@
             }
           },
           {
-            "name": "args",
+            "name": "time_start",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "title": "Args"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Time Start"
             }
           },
           {
-            "name": "kwargs",
+            "name": "time_end",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "title": "Kwargs"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Time End"
             }
           },
           {
@@ -687,6 +674,15 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_list_memories_api_v1_memories_list_get"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -722,22 +718,6 @@
         "description": "搜索记忆\n\n搜索模式：\n- is_project_level=True（默认）：搜索 agent 所属 project 下所有 agent 的记忆\n- is_project_level=False：只搜当前 agent",
         "operationId": "search_memories_api_v1_memories_search_post",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -790,25 +770,9 @@
           "memories"
         ],
         "summary": "Search Graph",
-        "description": "图搜索接口 - 内部调用统一的 get_context_for_query（向量+图）\n\n搜索模式：\n- is_project_level=True（默认）：搜索 agent 所属 project 下所有 agent 的记忆\n- is_project_level=False：只搜当前 agent\n\n注意：此接口与 /memories/search 共享配额计数逻辑。\n为避免重复计数，此接口不再单独增加使用次数。\n推荐使用 /memories/search 作为主要搜索接口。",
+        "description": "图搜索接口 - 内部调用统一的 get_context_for_query（向量+图）\n\n搜索模式：\n- is_project_level=True（默认）：搜索 agent 所属 project 下所有 agent 的记忆\n- is_project_level=False：只搜当前 agent\n\n与 /memories/search 一样：校验 X-API-Key，扣 1 次搜索配额（一次请求只算一次）。",
         "operationId": "search_graph_api_v1_memories_graph_search_post",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -873,22 +837,6 @@
             }
           },
           {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
             "name": "x-api-key",
             "in": "header",
             "required": false,
@@ -932,22 +880,6 @@
         "summary": "Get Quota Info",
         "operationId": "get_quota_info_api_v1_quota_get",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -993,22 +925,6 @@
         "description": "批量提交对话 - 触发记忆提取\n\n流程：\n1. 接收 messages JSON 数组\n2. 格式校验（每条消息必须有 role、content、timestamp）\n3. Celery 异步处理：敏感信息过滤 + LLM 提取记忆 + 向量化 + 图构建",
         "operationId": "flush_conversation_api_v1_conversations_flush_post",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -1061,22 +977,6 @@
         "operationId": "realtime_message_api_v1_conversations_realtime_post",
         "parameters": [
           {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
             "name": "x-api-key",
             "in": "header",
             "required": false,
@@ -1127,22 +1027,6 @@
         "operationId": "list_projects_api_projects_get",
         "parameters": [
           {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
             "name": "x-api-key",
             "in": "header",
             "required": false,
@@ -1184,22 +1068,6 @@
         "summary": "Create Project",
         "operationId": "create_project_api_projects_post",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -1264,22 +1132,6 @@
             }
           },
           {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
             "name": "x-api-key",
             "in": "header",
             "required": false,
@@ -1328,22 +1180,6 @@
             "schema": {
               "type": "integer",
               "title": "Project Id"
-            }
-          },
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
             }
           },
           {
@@ -1408,22 +1244,6 @@
             }
           },
           {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
             "name": "x-api-key",
             "in": "header",
             "required": false,
@@ -1468,22 +1288,6 @@
         "description": "获取 Agent 统计信息（新架构）",
         "operationId": "get_stats_api_stats_get",
         "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
           {
             "name": "x-api-key",
             "in": "header",
@@ -1537,22 +1341,6 @@
               "type": "integer",
               "default": 30,
               "title": "Days"
-            }
-          },
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
             }
           },
           {
@@ -1615,248 +1403,6 @@
         }
       }
     },
-    "/api/auth/otp/send": {
-      "post": {
-        "tags": [
-          "OTP Authentication"
-        ],
-        "summary": "Send Otp",
-        "operationId": "send_otp_api_auth_otp_send_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OTPRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/otp/verify": {
-      "post": {
-        "tags": [
-          "OTP Authentication"
-        ],
-        "summary": "Verify Otp",
-        "operationId": "verify_otp_api_auth_otp_verify_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OTPVerifyRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OTPVerifyResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/otp/rate-limit-status": {
-      "get": {
-        "tags": [
-          "OTP Authentication"
-        ],
-        "summary": "Rate Limit Status",
-        "operationId": "rate_limit_status_api_auth_otp_rate_limit_status_get",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Email"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/firebase": {
-      "post": {
-        "tags": [
-          "Firebase Auth"
-        ],
-        "summary": "Firebase Auth",
-        "description": "Authenticate with Firebase ID Token\n\nBody: {\"id_token\": \"...\"}\nor Header: Authorization: Bearer {firebase_id_token}",
-        "operationId": "firebase_auth_api_auth_firebase_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Authorization"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FirebaseAuthRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/firebase/config": {
-      "get": {
-        "tags": [
-          "Firebase Auth"
-        ],
-        "summary": "Get Firebase Config",
-        "description": "Get Firebase config for client-side initialization",
-        "operationId": "get_firebase_config_api_auth_firebase_config_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/agents/auto-register": {
       "post": {
         "tags": [
@@ -1865,24 +1411,7 @@
         "summary": "Auto Register Agent",
         "description": "Agent 自动注册接口\n\nSDK 首次启动时调用，携带机器指纹和 agent 信息。\n服务端创建/更新 Machine、Agent、Project，返回 API Key。",
         "operationId": "auto_register_agent_api_agents_auto_register_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -1927,22 +1456,6 @@
         "operationId": "get_agent_info_api_agents_info_get",
         "parameters": [
           {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          },
-          {
             "name": "X-API-Key",
             "in": "header",
             "required": false,
@@ -1982,24 +1495,7 @@
         "summary": "Initiate Claim",
         "description": "Agent 发起认领请求 - 生成验证码",
         "operationId": "initiate_claim_api_agents_claim_initiate_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -2083,24 +1579,7 @@
         "summary": "Verify Claim",
         "description": "用户在后台验证认领码",
         "operationId": "verify_claim_api_agents_claim_verify_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -2141,24 +1620,7 @@
         "summary": "Complete Binding",
         "description": "Agent 完成最终绑定 - 迁移数据到人类账户",
         "operationId": "complete_binding_api_agents_claim_complete_post",
-        "parameters": [
-          {
-            "name": "args",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Args"
-            }
-          },
-          {
-            "name": "kwargs",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -2185,6 +1647,563 @@
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/llm/proxy/chat/completions": {
+      "post": {
+        "tags": [
+          "llm-proxy"
+        ],
+        "summary": "Proxy Chat Completions",
+        "description": "Proxy endpoint for LLM clients (e.g. OpenClaw plugin).\n\nThis endpoint:\n1. Validates the API key and gets agent info\n2. Searches for relevant memories\n3. Injects memories into the system prompt\n4. Forwards the request to the target provider\n5. Returns the response (streaming or non-streaming)",
+        "operationId": "proxy_chat_completions_api_llm_proxy_chat_completions_post",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/llm/proxy/health": {
+      "get": {
+        "tags": [
+          "llm-proxy"
+        ],
+        "summary": "Proxy Health",
+        "description": "Health check for proxy endpoint",
+        "operationId": "proxy_health_api_llm_proxy_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/llm/proxy/config": {
+      "post": {
+        "tags": [
+          "llm-proxy"
+        ],
+        "summary": "Update Proxy Config",
+        "description": "Update proxy configuration for an agent\n\nThis allows the client to register its provider credentials\nfor server-side proxy mode.",
+        "operationId": "update_proxy_config_api_llm_proxy_config_post",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscription/create-checkout-session": {
+      "post": {
+        "tags": [
+          "subscription"
+        ],
+        "summary": "Create Checkout Session",
+        "operationId": "create_checkout_session_api_subscription_create_checkout_session_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateCheckoutSessionRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscription/create-portal-session": {
+      "post": {
+        "tags": [
+          "subscription"
+        ],
+        "summary": "Create Portal Session",
+        "operationId": "create_portal_session_api_subscription_create_portal_session_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscription/status": {
+      "get": {
+        "tags": [
+          "subscription"
+        ],
+        "summary": "Get Subscription Status",
+        "operationId": "get_subscription_status_api_subscription_status_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionStatus"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscription/cancel": {
+      "post": {
+        "tags": [
+          "subscription"
+        ],
+        "summary": "Cancel Subscription",
+        "operationId": "cancel_subscription_api_subscription_cancel_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscription/webhook": {
+      "post": {
+        "tags": [
+          "subscription"
+        ],
+        "summary": "Stripe Webhook",
+        "operationId": "stripe_webhook_api_subscription_webhook_post",
+        "parameters": [
+          {
+            "name": "Stripe-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Stripe-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/install": {
+      "get": {
+        "tags": [
+          "install"
+        ],
+        "summary": "Get Install Guide",
+        "description": "根据 URL 参数返回对应的安装指南\n\n- ?md=1: 返回 Markdown 格式（给 Agent 的链接）\n- ?client=openclaw: 返回 OpenClaw 指南\n- ?client=vscode: 返回 VS Code 指南\n- 无参数: 重定向到 HTML 页面（人类访问）\n\n示例:\n- https://t0ken.ai/install?md=1 （Agent 访问，返回 OpenClaw 指南）\n- https://t0ken.ai/install?md=1&client=vscode （Agent 访问，返回 VS Code 指南）\n- https://t0ken.ai/install （人类访问，重定向到 HTML）",
+        "operationId": "get_install_guide_install_get",
+        "parameters": [
+          {
+            "name": "md",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Md"
+            }
+          },
+          {
+            "name": "client",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Client"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models-repo/search": {
+      "get": {
+        "tags": [
+          "Models Repo"
+        ],
+        "summary": "Search Models",
+        "operationId": "search_models_api_models_repo_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Search keyword (model_id, slug or model_name)",
+              "default": "",
+              "title": "Q"
+            },
+            "description": "Search keyword (model_id, slug or model_name)"
+          },
+          {
+            "name": "developer",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by developer",
+              "title": "Developer"
+            },
+            "description": "Filter by developer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelRepoSearchResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models-repo/autocomplete": {
+      "get": {
+        "tags": [
+          "Models Repo"
+        ],
+        "summary": "Autocomplete Models",
+        "description": "Lightweight autocomplete — returns [{model_id, slug, model_name, developer}].",
+        "operationId": "autocomplete_models_api_models_repo_autocomplete_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Prefix to search",
+              "title": "Q"
+            },
+            "description": "Prefix to search"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 15,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Autocomplete Models Api Models Repo Autocomplete Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models-repo/developers": {
+      "get": {
+        "tags": [
+          "Models Repo"
+        ],
+        "summary": "List Developers",
+        "operationId": "list_developers_api_models_repo_developers_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeveloperCount"
+                  },
+                  "title": "Response List Developers Api Models Repo Developers Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models-repo/sync": {
+      "post": {
+        "tags": [
+          "Models Repo"
+        ],
+        "summary": "Trigger Sync",
+        "description": "Manually trigger a model repo sync (admin use).",
+        "operationId": "trigger_sync_api_models_repo_sync_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           }
@@ -2337,6 +2356,40 @@
         ],
         "title": "BindAgentRequest"
       },
+      "Body_list_memories_api_v1_memories_list_get": {
+        "properties": {
+          "categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categories"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          }
+        },
+        "type": "object",
+        "title": "Body_list_memories_api_v1_memories_list_get"
+      },
       "Body_login_api_auth_login_post": {
         "properties": {
           "grant_type": {
@@ -2466,6 +2519,52 @@
           "messages"
         ],
         "title": "ConversationFlushRequest"
+      },
+      "CreateCheckoutSessionRequest": {
+        "properties": {
+          "success_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Success Url"
+          },
+          "cancel_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Url"
+          }
+        },
+        "type": "object",
+        "title": "CreateCheckoutSessionRequest"
+      },
+      "DeveloperCount": {
+        "properties": {
+          "developer": {
+            "type": "string",
+            "title": "Developer"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "developer",
+          "count"
+        ],
+        "title": "DeveloperCount"
       },
       "FirebaseAuthRequest": {
         "properties": {
@@ -2633,56 +2732,150 @@
         ],
         "title": "MessageItem"
       },
-      "OTPRequest": {
+      "ModelRepoItem": {
         "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "title": "Email"
-          }
-        },
-        "type": "object",
-        "required": [
-          "email"
-        ],
-        "title": "OTPRequest"
-      },
-      "OTPVerifyRequest": {
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "title": "Email"
+          "id": {
+            "type": "integer",
+            "title": "Id"
           },
-          "otp": {
+          "model_id": {
             "type": "string",
-            "title": "Otp"
-          }
-        },
-        "type": "object",
-        "required": [
-          "email",
-          "otp"
-        ],
-        "title": "OTPVerifyRequest"
-      },
-      "OTPVerifyResponse": {
-        "properties": {
-          "is_new_user": {
-            "type": "boolean",
-            "title": "Is New User"
+            "title": "Model Id"
           },
-          "message": {
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "model_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Name"
+          },
+          "model_type": {
             "type": "string",
-            "title": "Message"
+            "title": "Model Type"
+          },
+          "developer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Developer"
+          },
+          "price_input_per_1m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Input Per 1M"
+          },
+          "price_output_per_1m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Output Per 1M"
+          },
+          "evaluations": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluations"
+          },
+          "speed_tps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speed Tps"
+          },
+          "ttft_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ttft Seconds"
+          },
+          "synced_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Synced At"
           }
         },
         "type": "object",
         "required": [
-          "is_new_user",
-          "message"
+          "id",
+          "model_id",
+          "model_type"
         ],
-        "title": "OTPVerifyResponse"
+        "title": "ModelRepoItem"
+      },
+      "ModelRepoSearchResult": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ModelRepoItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "ModelRepoSearchResult"
       },
       "ProjectCreate": {
         "properties": {
@@ -2766,6 +2959,55 @@
             ],
             "title": "Limit",
             "default": 10
+          },
+          "time_filter": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeFilter"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categories"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          },
+          "entity_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Name"
           }
         },
         "type": "object",
@@ -2773,6 +3015,109 @@
           "query"
         ],
         "title": "SearchQuery"
+      },
+      "SubscriptionStatus": {
+        "properties": {
+          "tier": {
+            "type": "string",
+            "title": "Tier"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "stripe_customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Customer Id"
+          },
+          "stripe_subscription_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Subscription Id"
+          },
+          "subscription_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subscription Status"
+          },
+          "current_period_end": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Period End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tier",
+          "price"
+        ],
+        "title": "SubscriptionStatus"
+      },
+      "TimeFilter": {
+        "properties": {
+          "start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          }
+        },
+        "type": "object",
+        "title": "TimeFilter"
+      },
+      "TimezoneUpdate": {
+        "properties": {
+          "timezone": {
+            "type": "string",
+            "title": "Timezone"
+          }
+        },
+        "type": "object",
+        "required": [
+          "timezone"
+        ],
+        "title": "TimezoneUpdate"
       },
       "Token": {
         "properties": {
@@ -2841,6 +3186,17 @@
               }
             ],
             "title": "Photo Url"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone"
           }
         },
         "type": "object",
@@ -2920,5 +3276,75 @@
         }
       }
     }
-  }
+  },
+  "x-tag-groups": [
+    {
+      "name": "Authentication",
+      "tags": [
+        "auth",
+        "Firebase Auth"
+      ]
+    },
+    {
+      "name": "API Keys",
+      "tags": [
+        "api-keys"
+      ]
+    },
+    {
+      "name": "Memories",
+      "tags": [
+        "memories"
+      ]
+    },
+    {
+      "name": "Conversations",
+      "tags": [
+        "conversations"
+      ]
+    },
+    {
+      "name": "Projects",
+      "tags": [
+        "projects"
+      ]
+    },
+    {
+      "name": "Stats",
+      "tags": [
+        "stats"
+      ]
+    },
+    {
+      "name": "Agents",
+      "tags": [
+        "Agent Auto Registration",
+        "Agent Account Claiming"
+      ]
+    },
+    {
+      "name": "LLM Proxy",
+      "tags": [
+        "llm-proxy"
+      ]
+    },
+    {
+      "name": "Subscription",
+      "tags": [
+        "subscription"
+      ]
+    },
+    {
+      "name": "Install",
+      "tags": [
+        "install"
+      ]
+    },
+    {
+      "name": "Models Repo",
+      "tags": [
+        "Models Repo"
+      ]
+    }
+  ]
 }
